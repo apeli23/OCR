@@ -34,7 +34,7 @@ export default function Home() {
     });
 }
   const uploadImage = async (img) => {
-    console.log('to upload ...', img)
+    // console.log('to upload ...', img)
     try {
       fetch("/api/upload", {
         method: "POST",
