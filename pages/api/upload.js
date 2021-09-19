@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       await worker.load();
       await worker.loadLanguage('eng');
       await worker.initialize('eng');
-      const { data: { text } } = await worker.recognize('https://tesseract.projectnaptha.com/img/eng_bw.png');
+      const { data: { text } } = await worker.recognize(fileStr);
       // console.log(text);
       uploaded_url = text
       await worker.terminate();

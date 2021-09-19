@@ -1,6 +1,12 @@
- 
-body {
-   
-  display: flex;
+.column {
+  float: left;
+  width: 50%;
 }
- 
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+#c {
+  border: 1px solid black;
+}
