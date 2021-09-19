@@ -12,11 +12,11 @@ export const config = {
  
 export default async function handler(req, res) {
   let uploaded_url = ""
-  const fileStr = req.body.data;
+  const fileStr = 'https://tesseract.projectnaptha.com/img/eng_bw.png';
 
   if (req.method === "POST") {
 
-    console.log("backend received");
+    console.log("backend received", fileStr);
 
     try {
       Tesseract.recognize(
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       console.log('error', error);
     }
 
-      // res.status(200).json({ data : text });
+      res.status(200).json({ data : uploaded_url });
       console.log(uploaded_url);
   }
 }
