@@ -1,14 +1,21 @@
-video{
-  border: 4px solid cornflowerblue;   
+body{
+  height:100vh;
+  margin:0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+  background: linear-gradient(45deg, #8BC34A, #2196F3);
 }
-canvas{
-  border: 4px solid gold;
+
+video, canvas{
+  width:80%;
+  max-width: 600px;
+  border: 10px solid #fff;
+  box-shadow: 7px 8px 15px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
 }
-img{
-  border: 4px solid red;
+video:focus{
+  outline: 0;
 }
-section{
-  padding: 1rem;
-  font-size: 30px;
-  font-family: Arial, Helvetica, sans-serif;
-}
+ 
