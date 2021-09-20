@@ -5,42 +5,38 @@ const Test = () => {
     const vplayer = useRef(null)
     const canvasRef = useRef(null);
     useEffect(() => {
-        const player = vplayer.current
-        console.log(player)
-        const canvas = canvasRef.current;
-        console.log('canvas', canvas)
-        let context = canvas.getContext('2d');
-        console.log('context', context)
-        canvas.width = 300;
-        console.log('width', canvas.width)
-        canvas.height = 300;
-        console.log('height', canvas.height)
+        const canvas = document.querySelector('canvas');
+        console.log('canvas', canvas);
+        const video = document.querySelector('video');
+        console.log('video', video);
+        const ctx = canvas.getContext('2d');
+        console.log('ctx', ctx);
 
-        //grab a frame from the video
-        context.drawImage(player, 0, 0);
+        /**
+    * Set canvas dimensions
+    */
+        video.addEventListener('loadedmetadata', () => {
+            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+        });
 
-        //convert to grayscale image
-        //ONLY WORKS IF image is not tainted by CORS
 
-        let imgdata = context.getImageData(0, 0, canvas.width, canvas.height);
-        imgdata.crossOrigin = "Anonymous";
-        console.log('imgdata', imgdata)
-        let len = imgdata.data.length;
-        //width * height * 4 = length of the array
-        for (let i = 0; i < len; i = i + 4) {
-            let red = imgdata.data[i];
-            let green = imgdata.data[i + 1];
-            let blue = imgdata.data[i + 2];
-            //let lum = .2126 * red + .7152 * green + .0722 * blue;
-            let lum = (red + green + blue) / 3;
-            imgdata.data[i] = lum;
-            imgdata.data[i + 1] = lum;
-            imgdata.data[i + 2] = lum;
-        }
-        //update what is displayed on the canvas.
-        context.putImageData(imgdata, 0, 0);
-        // console.log(canvas.toBlob())
-        
+        /**
+         * 1. Start drawing on play
+         * 2. Redraw
+         */
+        const frameRate = 24;
+
+        video.addEventListener('play', () => {
+            const drawImage = () => {
+                ctx.drawImage(video, 0, 0);
+                if (!video.paused) {
+                    setTimeout(drawImage, 1000 / frameRate);
+                }
+            }
+            setTimeout(drawImage, 1000 / frameRate);
+        })
+
 
     }, []);
 
@@ -48,29 +44,8 @@ const Test = () => {
     return (
         <div>
 
-            {/* <button onClick={grabScreen}>grabScrn</button> */}
-            <h3>
-                scroll up is forward
-            </h3>
-            <div className="row">
-                <div className="column">
-                    <div>
-                        Video element:
-                    </div>
-                    <video controls height="120" ref={vplayer} id="v" tabIndex="-1" autobuffer="auto" preload="auto">
-                        <source type="video/webm" src="https://www.html5rocks.com/tutorials/video/basics/Chrome_ImF.webm" />
-                    </video>
-                </div>
-                <div className="column">
-                    <div>
-                        Canvas element:
-                    </div>
-                    <canvas ref={canvasRef} id="c"></canvas>
-                    <div>
-                        Momentum: <input type='text' id="t" />
-                    </div>
-                </div>
-            </div>
+            <video src="https://www.html5rocks.com/tutorials/video/basics/Chrome_ImF.webm" autoPlay muted loop controls></video>
+            <canvas></canvas>
         </div>
     )
 };
