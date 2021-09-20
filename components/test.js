@@ -1,33 +1,50 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 
-const useCanvas = (callback) => {
+const Test = () => {
+    const vplayer = useRef(null)
     const canvasRef = useRef(null);
-
     useEffect(() => {
+        const player = vplayer.current
+        console.log(player)
         const canvas = canvasRef.current;
         console.log('canvas', canvas)
-        const context = canvas.getContext('2d');
+        let context = canvas.getContext('2d');
         console.log('context', context)
-        callback([canvas, context]);
+        canvas.width = 300;
+        console.log('width', canvas.width)
+        canvas.height = 300;
+        console.log('height', canvas.height)
+
+        //grab a frame from the video
+        context.drawImage(player, 0, 0);
+
+        //convert to grayscale image
+        //ONLY WORKS IF image is not tainted by CORS
+
+        let imgdata = context.getImageData(0, 0, canvas.width, canvas.height);
+        imgdata.crossOrigin = "Anonymous";
+        console.log('imgdata', imgdata)
+        let len = imgdata.data.length;
+        //width * height * 4 = length of the array
+        for (let i = 0; i < len; i = i + 4) {
+            let red = imgdata.data[i];
+            let green = imgdata.data[i + 1];
+            let blue = imgdata.data[i + 2];
+            //let lum = .2126 * red + .7152 * green + .0722 * blue;
+            let lum = (red + green + blue) / 3;
+            imgdata.data[i] = lum;
+            imgdata.data[i + 1] = lum;
+            imgdata.data[i + 2] = lum;
+        }
+        //update what is displayed on the canvas.
+        context.putImageData(imgdata, 0, 0);
+        // console.log(canvas.toBlob())
+        
+
     }, []);
 
-    return canvasRef;
-}
 
-const Test = () => {
-    const [position, setPosition] = useState({})
-    const canvasRef = useCanvas(([canvas, context]) => {
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        const x = canvas.width;
-        const y = canvas.height;
-        setPosition({ x, y });
-
-    });
-    const vid = useRef()
-
-    console.log('vid', vid)
-    
     return (
         <div>
 
@@ -40,7 +57,7 @@ const Test = () => {
                     <div>
                         Video element:
                     </div>
-                    <video controls height="120" ref={vid} id="v" tabIndex="-1" autobuffer="auto" preload="auto">
+                    <video controls height="120" ref={vplayer} id="v" tabIndex="-1" autobuffer="auto" preload="auto">
                         <source type="video/webm" src="https://www.html5rocks.com/tutorials/video/basics/Chrome_ImF.webm" />
                     </video>
                 </div>
@@ -48,7 +65,7 @@ const Test = () => {
                     <div>
                         Canvas element:
                     </div>
-                    <canvas ref={canvasRef}  id="c"></canvas>
+                    <canvas ref={canvasRef} id="c"></canvas>
                     <div>
                         Momentum: <input type='text' id="t" />
                     </div>
