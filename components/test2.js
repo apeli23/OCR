@@ -7,6 +7,20 @@ function Test2() {
     const canvasRef = useRef(null);
     const targetframeRef = useRef(null)
     const frameRate = 24;
+    let arr = []
+
+    function seek(targetOffset, targetFrame, vid) {
+        targetOffset = targetOffset * 0.9;
+        targetFrame.value = Math.round(targetOffset * 100) / 100;
+        var vct = vid.currentTime - targetOffset;
+        if (vct < 0) {
+            vct = vid.duration + vct;
+        } else if (vct > vid.duration) {
+            vct = vct - vid.duration;
+        }
+        vid.currentTime = vct;
+        console.log('vct', vct);
+    }
 
     useEffect(() => {
         var vid = videoRef.current;
@@ -36,27 +50,16 @@ function Test2() {
         // that's all is needed
         vid.addEventListener('seeked', function () {
             context.drawImage(vid, 0, 0, cw, ch);
+            handleUpload(context)
         });
 
         seek(targetOffset, targetFrame, vid)
     }, [seek])
 
-    function seek(targetOffset, targetFrame, vid) {
-        // console.log('targetOffset', targetOffset);
-        // console.log('targetFrame', targetFrame);
-        // console.log('vid', vid);
-        targetOffset = targetOffset * 0.9;
-        targetFrame.value = Math.round(targetOffset * 100) / 100;
-        var vct = vid.currentTime - targetOffset;
-        if (vct < 0) {
-            vct = vid.duration + vct;
-        } else if (vct > vid.duration) {
-            vct = vct - vid.duration;
-        }
-        vid.currentTime = vct;
-
+    function handleUpload(context) {
+        console.log(context.drawImage())
+         
     }
-
 
     return (
         <div>
