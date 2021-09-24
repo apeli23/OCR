@@ -2,18 +2,19 @@ import React, { useState, useRef, useEffect } from 'react';
 import captureVideoFrame from "capture-video-frame";
 
 const Test = () => {
-    var photo; 
-    const[pic, setPic] = useState()
-    
+    var photo;
+    const [pic, setPic] = useState()
+    const videoRef = useRef(null)
+    const canvasRef = useRef(null)
     useEffect(() => {
         /**
      * 1. Select video and canvas
      * 2. Get canvas context
      */
-        const canvas = document.querySelector('canvas');
+        const canvas = canvasRef.current;
         // console.log('canvas', canvas);
 
-        const video = document.querySelector('video');
+        const video = videoRef.current;
         // console.log('video', video);
 
         const ctx = canvas.getContext('2d');
@@ -23,14 +24,20 @@ const Test = () => {
     * Set canvas dimensions
     */
         video.addEventListener('loadedmetadata', () => {
-            canvas.height = video.videoHeight;
-            canvas.width = video.videoWidth;
+            canvas.height = 400;
+            canvas.width = 360;
         });
-
+        console.log(video)
         /**
      * 1. Start drawing on play
      * 2. Redraw
      */
+
+        draw(video, ctx)
+        console.log('reached here')
+    }, [draw]);
+
+    function draw(video, ctx) {
         const frameRate = 24;
         video.addEventListener('play', () => {
             const drawImage = () => {
@@ -41,22 +48,13 @@ const Test = () => {
             }
             setTimeout(drawImage, 1000 / frameRate);
 
-            // setPhoto(ctx)
-            // console.log('photo')
         })
-        // console.log('finalctx', ctx);
-        handleUpload(ctx)
-    }, [handleUpload]);
-    
-    function handleUpload(img){
-        setPic(img)
-        console.log('handle', pic)
-    }        
+        console.log('ctx', ctx);
+    }
     return (
         <div>
-            <button onClick={handleUpload}>upload</button>
-            <video id='video' src='https://res.cloudinary.com/dogjmmett/video/upload/v1632176814/cisne_1_wtkyzm.mp4' autoPlay muted loop controls></video>
-            <canvas></canvas>
+            <video id='video' ref={videoRef} src='https://res.cloudinary.com/dogjmmett/video/upload/v1632176814/cisne_1_wtkyzm.mp4' autoPlay muted loop controls width='400' height ='360'></video>
+            <canvas ref={canvasRef}></canvas>
         </div>
     )
 };

@@ -1,4 +1,4 @@
-body{
+/* body{
   height:100vh;
   margin:0;
   display: flex;
@@ -17,5 +17,17 @@ video, canvas{
 }
 video:focus{
   outline: 0;
+} */
+.column {
+  float: left;
+  width: 50%;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+#c {
+  border: 1px solid black;
 }
  

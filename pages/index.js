@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div>
 
-      <Test />
+      <Test2 />
 
     </div>
   )
