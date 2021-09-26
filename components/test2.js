@@ -6,8 +6,20 @@ function Test2() {
     const canvasRef = useRef(null);
     const targetframeRef = useRef(null)
     const imageRef = useRef(null);
+    const btnRef = useRef(null)
+    const inputRef = (null)
+
     const frameRate = 24;
-    let arr = []
+    const [video, setVideo] = useState();
+
+
+    const handleChange = (e) => {
+        console.log(e.target.files[0]);
+
+    }
+
+
+
 
     function seek(targetOffset, targetFrame, vid) {
         targetOffset = targetOffset * 0.9;
@@ -20,6 +32,8 @@ function Test2() {
         }
         vid.currentTime = vct;
     }
+
+
 
     useEffect(() => {
         var vid = videoRef.current;
@@ -34,10 +48,14 @@ function Test2() {
         var targetFrame = targetframeRef.current;
         // console.log('targetFrame', targetFrame)
 
+        var button = btnRef.current
+
         var cw = canvas.width = 200;
         var ch = canvas.height = Math.round(cw / 1.7777);
 
         var targetOffset = 0;
+
+
 
         window.addEventListener('wheel', function (e) {
             e.preventDefault();
@@ -47,36 +65,50 @@ function Test2() {
             return false;
         });
         // that's all is needed
-        vid.addEventListener('seeked', function () {
-            context.drawImage(vid, 0, 0, cw, ch);
-            console.log(context)
-            arr.push(context)
-        });
+        if(!vid){
+            return
+        }else{
+            vid.addEventListener('seeked', function () {
+                context.drawImage(vid, 0, 0, cw, ch);
+                handleUpload(canvas)
+    
+            });
+    
+        }
+        
+        button.addEventListener('click', function () {
+            // var dataURL = canvas.toDataURL();
+            var img = new Image();
+            img.crossOrigin = 'anonymous'
+        })
+
+
+
 
         seek(targetOffset, targetFrame, vid)
     }, [seek])
 
-    function handleUpload() {
-        var imgarr = arr.slice(-1);
-
-        console.log('using context', imgarr[0])
-
-         
-    }
+     
 
     return (
         <div>
-            <button onClick={handleUpload}>upload</button>
+            <button onClick={handleUpload} ref={btnRef}>upload</button>
             <h3>
                 scroll up is forward
             </h3>
             <div className="row">
                 <div className="column">
                     <div>
-                        Video element:
+                        <input
+                            onChange={handleChange}
+                            type="file"
+                            onChange={(e) => setVideo(e.target.files?.item(0))}
+                        />
                     </div>
                     <video controls height="120" ref={videoRef} id="v" tabIndex="-1" autobuffer="auto" preload="auto">
-                        <source type="video/webm" src="https://www.html5rocks.com/tutorials/video/basics/Chrome_ImF.webm" />
+                        <source type="video/webm"
+                        // src={URL.createObjectURL(video)}
+                        />
                     </video>
                 </div>
                 <div className="column">
@@ -84,7 +116,7 @@ function Test2() {
                         Canvas element:
                     </div>
                     <canvas ref={canvasRef} id="c"></canvas>
-                    <div>
+                    <div >
                         Momentum: <input ref={targetframeRef} type='text' id="t" />
                     </div>
                 </div>

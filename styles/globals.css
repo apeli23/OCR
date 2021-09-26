@@ -20,4 +20,6 @@
 #c {
   border: 1px solid black;
 }
- 
+#show{
+  display:flex;
+}
