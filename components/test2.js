@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import captureVideoFrame from "capture-video-frame";
 
 
 function Test2() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const targetframeRef = useRef(null)
+    const imageRef = useRef(null);
     const frameRate = 24;
     let arr = []
 
@@ -19,7 +19,6 @@ function Test2() {
             vct = vct - vid.duration;
         }
         vid.currentTime = vct;
-        console.log('vct', vct);
     }
 
     useEffect(() => {
@@ -50,19 +49,24 @@ function Test2() {
         // that's all is needed
         vid.addEventListener('seeked', function () {
             context.drawImage(vid, 0, 0, cw, ch);
-            handleUpload(context)
+            console.log(context)
+            arr.push(context)
         });
 
         seek(targetOffset, targetFrame, vid)
     }, [seek])
 
-    function handleUpload(context) {
-        console.log(context.drawImage())
+    function handleUpload() {
+        var imgarr = arr.slice(-1);
+
+        console.log('using context', imgarr[0])
+
          
     }
 
     return (
         <div>
+            <button onClick={handleUpload}>upload</button>
             <h3>
                 scroll up is forward
             </h3>
@@ -83,6 +87,11 @@ function Test2() {
                     <div>
                         Momentum: <input ref={targetframeRef} type='text' id="t" />
                     </div>
+                </div>
+                <div className="column">
+                    <img ref={imageRef} />
+                </div>
+                <div className="column">
                 </div>
             </div>
         </div>
