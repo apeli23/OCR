@@ -65,30 +65,27 @@ function Test2() {
             return false;
         });
         // that's all is needed
-        if(!vid){
+        if (!vid) {
             return
-        }else{
+        } else {
             vid.addEventListener('seeked', function () {
                 context.drawImage(vid, 0, 0, cw, ch);
                 handleUpload(canvas)
-    
+
             });
-    
+
         }
-        
+
         button.addEventListener('click', function () {
             // var dataURL = canvas.toDataURL();
             var img = new Image();
             img.crossOrigin = 'anonymous'
         })
 
-
-
-
         seek(targetOffset, targetFrame, vid)
     }, [seek])
 
-     
+
 
     return (
         <div>
