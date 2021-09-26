@@ -13,8 +13,8 @@ function Test3() {
     const [video, setVideo] = useState();
 
     function showFunction() {
-        var inpt = previewRef.current
-        inpt.style.display = 'none'
+        var preview = previewRef.current
+        preview.style.display = 'none'
     }
 
     return (
@@ -22,15 +22,14 @@ function Test3() {
             <input
                 ref={inputRef}
                 onClick={showFunction}
-                // onChange={handleChange}
                 type="file"
                 onChange={(e) => setVideo(e.target.files?.item(0))}
-            />
+            /><br/>
             {video && (
-                <video controls width="230" src={URL.createObjectURL(video)}></video>
+                <video ref={videoRef} className="Video" controls src={URL.createObjectURL(video)}></video>
             )}
              
-                <video controls height="120" ref={previewRef} id="v" tabIndex="-1" autobuffer="auto" preload="auto">
+                <video className="Video" controls height="120" ref={previewRef} id="v" tabIndex="-1" autobuffer="auto" preload="auto">
                     <source type="video/webm"
                         src='https://res.cloudinary.com/dogjmmett/video/upload/v1632176814/cisne_1_wtkyzm.mp4'
                     />
