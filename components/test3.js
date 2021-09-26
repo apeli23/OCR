@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Button from '@material-ui/core/Button'
+import { useScreenshot } from 'use-react-screenshot'
 
 function Test3() {
     const videoRef = useRef(null);
@@ -8,9 +10,14 @@ function Test3() {
     const btnRef = useRef(null)
     const inputRef = useRef(null)
     const previewRef = useRef(null)
+    const photoRef = useRef(null)
 
     const frameRate = 24;
     const [video, setVideo] = useState();
+
+    const [img, takeScreenshot] = useScreenshot()
+
+    const [photo, setPhoto] = useState();
 
     function showFunction() {
         var preview = document.getElementById('preview')
@@ -60,19 +67,20 @@ function Test3() {
         vid.addEventListener('seeked', function () {
             context.drawImage(vid, 0, 0, cw, ch);
             // handleUpload(canvas)
-
         });
 
-        // button.addEventListener('click', function () {
-        //     // var dataURL = canvas.toDataURL();
-        //     var img = new Image();
-        //     img.crossOrigin = 'anonymous'
-        // })
+        button.addEventListener('click', function () {
+            let img = takeScreenshot(photoRef.current);
+            handleOCR(img)
+        })
 
         seek(targetOffset, targetFrame, vid)
 
     }, [seek])
 
+    function handleOCR(img) {
+        console.log('imgOCR', img)
+    }
     return (
         <div>
             <div className='row'>
@@ -96,11 +104,15 @@ function Test3() {
                 </div>
                 <div className='column'>
                     <h3>Canvas Element</h3>
-                    <canvas ref={canvasRef} id="c"></canvas>
-                    <div >
-                        Momentum: <input ref={targetframeRef} type='text' id="t" />
+                    <div ref={photoRef}>
+                        <canvas ref={canvasRef} id="c"></canvas>
                     </div>
+                    <div>
+                        Momentum: <input ref={targetframeRef} type='text' id="t" />
+                    </div><br />
+                    <Button variant='contained' color='primary' ref={btnRef}>Upload</Button>
                 </div>
+
             </div>
         </div>
     )
