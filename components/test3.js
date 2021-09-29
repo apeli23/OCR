@@ -65,20 +65,24 @@ function Test3() {
         });
 
         vid.addEventListener('seeked', function () {
+            canvas.crossOrigin = 'Anonymous'
             context.drawImage(vid, 0, 0, cw, ch);
             // handleUpload(canvas)
         });
 
         button.addEventListener('click', function () {
-            let img = takeScreenshot(photoRef.current);
-            handleOCR(img)
+            var downloadedImg = new Image;
+            downloadedImg.crossOrigin = "Anonymous";
+            // let img = takeScreenshot(photoRef.current);
+            downloadedImg.src = canvas.toDataURL("image/jpg");
         })
 
         seek(targetOffset, targetFrame, vid)
 
     }, [seek])
 
-    function handleOCR(img) {
+    function handleOCR( ) {
+        let img = takeScreenshot(photoRef.current);
         console.log('imgOCR', img)
     }
     return (
@@ -110,7 +114,7 @@ function Test3() {
                     <div>
                         Momentum: <input ref={targetframeRef} type='text' id="t" />
                     </div><br />
-                    <Button variant='contained' color='primary' ref={btnRef}>Upload</Button>
+                    <Button variant='contained' color='primary' ref={handleOCR}>Upload</Button>
                 </div>
 
             </div>
