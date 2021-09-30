@@ -7,8 +7,11 @@ function OCR() {
     const inputRef = useRef(null);
     const [video, setVideo] = useState();
     const [preview, setPreview] = useState();
+    const [text, setText] = useState();
     const imgRef = useRef(null);
     var snapshoter;
+    let url=[]
+    let recognized_Text = ''
 
 
     const onChange = async (e) => {
@@ -35,12 +38,21 @@ function OCR() {
             }).then((response) => {
                 console.log(response.status);
                 response.json().then((data) => {
-                    console.log(data)
+                    // console.log(data)
+                    // console.log('data:', data);
+                    url.push(data);
                 });
+                handleText(url)
             });
         } catch (error) {
             console.error(error);
         }
+    }
+     
+    function handleText (){
+        console.log('url[0]', url)
+        // recognized_Text =url[0]
+        console.log('recognized_Text', recognized_Text)
     }
     return (
         <div>
@@ -62,6 +74,12 @@ function OCR() {
                     {preview && (
                         <img ref={imgRef} className="Video" src={preview} controls />
                     )}<br />
+                </div>
+            </div>
+            <div className='row'>
+                <div className='column'>
+                    <h1>Recognized Text shows here</h1>
+                    <p>{text}</p>
                 </div>
             </div>
         </div>
