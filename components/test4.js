@@ -9,12 +9,16 @@ function Test4(props) {
     const [video, setVideo] = useState();
     const [preview, setPreview] = useState();
     const imgRef = useRef(null);
+    var snapshoter;
 
+    useEffect(() => {
+        
+    }, [])
     const onChange = async (e) => {
         const file = e.target.files?.item(0);
         console.log('files', file)
         setVideo(file)
-        var snapshoter = new VideoSnapshot(file);
+        snapshoter = new VideoSnapshot(file);
         try {
             const videoPreview = await snapshoter.takeSnapshot();
             // console.log('videoPreview', videoPreview)
@@ -25,9 +29,13 @@ function Test4(props) {
     }
 
     const onSnapshot = async () => {
-        if (!preview || !video) return;
-        const currentTime = videoRef.current.currentTime;
-        console.log(currentTime)
+        snapshoter = new VideoSnapshot(video)
+        console.log('snapshoter', snapshoter);
+        const currentTime = videoRef.current.currentTime
+        console.log('currentTime', currentTime);
+        const videoPreview = await snapshoter.takeSnapshot(currentTime)
+        console.log('videoPreview', videoPreview);
+        setPreview(videoPreview);
     }
 
     return (
