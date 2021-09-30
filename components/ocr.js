@@ -10,7 +10,8 @@ function OCR() {
     const [text, setText] = useState();
     const imgRef = useRef(null);
     var snapshoter;
-    let url=[]
+    let url = []
+    let obj = {}
     let recognized_Text = ''
 
 
@@ -38,21 +39,21 @@ function OCR() {
             }).then((response) => {
                 console.log(response.status);
                 response.json().then((data) => {
-                    // console.log(data)
-                    // console.log('data:', data);
+                    console.log('data:', data);
                     url.push(data);
+                    // console.log('url', url)
+                    // console.log('url[0]', url[0])
+                    handleText(url[0])
                 });
-                handleText(url)
             });
         } catch (error) {
             console.error(error);
         }
     }
-     
-    function handleText (){
-        console.log('url[0]', url)
-        // recognized_Text =url[0]
-        console.log('recognized_Text', recognized_Text)
+
+    function handleText (txt){
+        recognized_Text = txt.message;
+        setText(recognized_Text);
     }
     return (
         <div>

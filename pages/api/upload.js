@@ -18,7 +18,7 @@ export const config = {
 
 export default async function handler(req, res) {
   let uploaded_url = ""
-  const fileStr = 'https://tesseract.projectnaptha.com/img/eng_bw.png'
+  const fileStr = req.body.data
 
   if (req.method === "POST") {
 
