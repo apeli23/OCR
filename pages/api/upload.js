@@ -37,7 +37,6 @@ export default async function handler(req, res) {
     }
 
     res.status(200).json({ message: uploaded_url });
-    // console.log("upoaded_url", uploaded_url);
     console.log('backend complete')
   }
 }

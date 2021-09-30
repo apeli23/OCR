@@ -1,42 +1,36 @@
-import { buildUrl } from 'cloudinary-build-url';
-import { useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import VideoSnapshot from 'video-snapshot';
+import Button from '@material-ui/core/Button'
 
 function OCR() {
-    const image = useRef();
+    const videoRef = useRef(null);
+    const inputRef = useRef(null);
+    const [video, setVideo] = useState();
+    const [preview, setPreview] = useState();
+    const imgRef = useRef(null);
+    var snapshoter;
 
-    const handleUpload = async (e) => {
+
+    const onChange = async (e) => {
         const file = e.target.files?.item(0);
-        console.log('file', file);
-
-        // Store promises in array
-
-        await readFile(file).then((encoded_file) => {
-            uploadImage(encoded_file);
-        });
-
+        setVideo(file)
     }
 
-    function readFile(file) {
-        return new Promise(function (resolve, reject) {
-            let fr = new FileReader();
-
-            fr.onload = function () {
-                resolve(fr.result);
-            };
-
-            fr.onerror = function () {
-                reject(fr);
-            };
-
-            fr.readAsDataURL(file);
-        });
+    const onSnapshot = async () => {
+        snapshoter = new VideoSnapshot(video)
+        const currentTime = videoRef.current.currentTime
+        const videoPreview = await snapshoter.takeSnapshot(currentTime)
+        setPreview(videoPreview);
+        handleOCR(videoPreview);
     }
-    const uploadImage = async (img) => {
-        // console.log('to upload ...', img)
+
+
+    const handleOCR = async (preview) => {
+        // console.log('to upload ...', preview)
         try {
             fetch("/api/upload", {
                 method: "POST",
-                body: JSON.stringify({ data: img }),
+                body: JSON.stringify({ data: preview }),
                 headers: { "Content-Type": "application/json" },
             }).then((response) => {
                 console.log(response.status);
@@ -50,8 +44,26 @@ function OCR() {
     }
     return (
         <div>
-            <input onChange={handleUpload} type="" ref={image} type='file' />
-            <button  >Upload</button>
+            <div className="row">
+                <div className="column">
+                    <h1># Video snapshot 🎥</h1>
+                    <input
+                        ref={inputRef}
+                        type="file"
+                        onChange={onChange}
+                    /><br />
+                    {video && (
+                        <video ref={videoRef} className="Video" controls src={URL.createObjectURL(video)}></video>
+                    )}<br />
+                    <Button variant='contained' color='primary' onClick={onSnapshot}>Take Snapshot</Button>
+                </div>
+                <div className='column'>
+                    <h1>Snapshot preview 🦄</h1>
+                    {preview && (
+                        <img ref={imgRef} className="Video" src={preview} controls />
+                    )}<br />
+                </div>
+            </div>
         </div>
     )
 } export default OCR;

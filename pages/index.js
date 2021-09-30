@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div>
 
-      <Test4 />
+      <OCR />
 
     </div>
   )
