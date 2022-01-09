@@ -6,10 +6,8 @@ import Test4 from "../components/test4"
 export default function Home() {
 
   return (
-    <div>
-
+    <>
       <OCR />
-
-    </div>
+    </>
   )
 }
