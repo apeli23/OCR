@@ -1,14 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import VideoSnapshot from 'video-snapshot';
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
+
+
 
 function OCR() {
+
     const videoRef = useRef(null);
     const inputRef = useRef(null);
+    const imgRef = useRef(null);
+    const textRef = useRef(null)
+
     const [video, setVideo] = useState();
     const [preview, setPreview] = useState();
     const [text, setText] = useState();
-    const imgRef = useRef(null);
+    const [pdf, setPDF] = useState();
+
+    const { jsPDF } = require("jspdf");
+
     var snapshoter;
     let url = []
     let obj = {}
@@ -43,7 +52,7 @@ function OCR() {
                     url.push(data);
                     // console.log('url', url)
                     // console.log('url[0]', url[0])
-                    handleText(url[0])
+                    generatePDF(url[0])
                 });
             });
         } catch (error) {
@@ -51,9 +60,40 @@ function OCR() {
         }
     }
 
-    function handleText (txt){
+    async function generatePDF(txt) {
         recognized_Text = txt.message;
         setText(recognized_Text);
+        const pdf_text = textRef.current
+        console.log('pdf_text', pdf_text)
+
+        const doc = new jsPDF();
+        doc.text(recognized_Text, 10, 10);
+        doc.save("a4.pdf")
+        
+        
+        
+
+    }
+
+    
+    function handleCloudinary() {
+        console.log(pdf)
+        // try {
+        //     fetch("/api/upload", {
+        //         method: "POST",
+        //         body: JSON.stringify({ data: img }),
+        //         headers: { "Content-Type": "application/json" },
+        //     })
+        //         // .then((response) => {
+        //         //     console.log("response", response.status)
+        //         //     response.json().then((data) => {
+        //         //         urls.push(data.data);
+        //         //         toStringUrl(urls)
+        //         //     });
+        //         // });
+        // } catch (error) {
+        //     console.error(error);
+        // }
     }
     return (
         <div>
@@ -80,7 +120,8 @@ function OCR() {
             <div className='row'>
                 <div className='column'>
                     <h1>Recognized Text shows here</h1>
-                    <p>{text}</p>
+                    <p ref={textRef}>{text}</p>
+                    <Button onClick={handleCloudinary}>Upload</Button>
                 </div>
             </div>
         </div>

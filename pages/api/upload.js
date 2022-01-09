@@ -2,6 +2,7 @@ var cloudinary = require("cloudinary").v2;
 import Tesseract from 'tesseract.js';
 import { createWorker } from 'tesseract.js';
 
+
 const worker = createWorker({
   logger: m => console.log(m)
 });
