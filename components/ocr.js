@@ -32,12 +32,13 @@ function OCR() {
   let recognized_Text = '';
 
   const videoHandler = async (e) => {
-    // const file = e.target.files?.item(0);
-    // console.log(file);
     inputRef.current.click();
   };
 
-  const handleChange = (e) => {};
+  const handleChange = (e) => {
+    const file = e.target.files?.item(0);
+    setVideo(file);
+  };
 
   const onSnapshot = async () => {
     snapshoter = new VideoSnapshot(video);
@@ -127,11 +128,7 @@ function OCR() {
               src={URL.createObjectURL(video)}
             ></Video>
           ) : (
-            <Video
-              ref={videoRef}
-              className="Video"
-              controls
-            ></Video>
+            <Video controls></Video>
           )}
           <Button>Recognize Text</Button>
         </VideoContainer>

@@ -35,7 +35,7 @@ export const Button = styled.div`
     text-decoration: none;
     text-transform: uppercase;
     width: 100%;
-    border: 1px solid;
+    // border: 1px solid;
     overflow: hidden;
     position: relative;
     &:after {
@@ -52,6 +52,7 @@ export const Button = styled.div`
         z-index: -10;
     }
     &:hover {
+      transform: scale(1.5);
         text-decoration: none;
         :after {
             left: 120%;
@@ -60,7 +61,7 @@ export const Button = styled.div`
     }
 `;
 
-export const Video = styled.div`
+export const Video = styled.video`
   width: 40vw;
   height: 30vw;
   margin: 1rem;
