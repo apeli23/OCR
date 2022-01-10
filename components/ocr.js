@@ -10,25 +10,32 @@ import {
   TopText,
   TopRight,
 } from '../styles/topbar';
-
-import { Button, Container, Title, Video, VideoContainer } from '../styles/ocr';
+import {
+  Flex,
+  Button,
+  Container,
+  Title,
+  Video,
+  VideoContainer,
+  UploadButton,
+  Status,
+  Text,
+} from '../styles/ocr';
+import Link from 'next/link';
 
 function OCR() {
   const videoRef = useRef(null);
   const inputRef = useRef(null);
-  const imgRef = useRef(null);
-  const textRef = useRef(null);
+  const pdfRef = useRef(null);
 
   const [video, setVideo] = useState();
-  const [preview, setPreview] = useState();
-  const [text, setText] = useState();
-  const [pdf, setPDF] = useState();
+  const [uploadready, setUploadReady] = useState(false);
+  const [link, setLink] = useState('');
 
   const { jsPDF } = require('jspdf');
 
   var snapshoter;
   let url = [];
-  let obj = {};
   let recognized_Text = '';
 
   const videoHandler = async (e) => {
@@ -40,28 +47,23 @@ function OCR() {
     setVideo(file);
   };
 
-  const onSnapshot = async () => {
+  const handleSnapshot = async () => {
     snapshoter = new VideoSnapshot(video);
     const currentTime = videoRef.current.currentTime;
     const videoPreview = await snapshoter.takeSnapshot(currentTime);
-    setPreview(videoPreview);
     handleOCR(videoPreview);
   };
 
   const handleOCR = async (preview) => {
-    // console.log('to upload ...', preview)
     try {
-      fetch('/api/upload', {
+      fetch('/api/tesseract', {
         method: 'POST',
         body: JSON.stringify({ data: preview }),
         headers: { 'Content-Type': 'application/json' },
       }).then((response) => {
         console.log(response.status);
         response.json().then((data) => {
-          console.log('data:', data);
           url.push(data);
-          // console.log('url', url)
-          // console.log('url[0]', url[0])
           generatePDF(url[0]);
         });
       });
@@ -70,35 +72,50 @@ function OCR() {
     }
   };
 
-  async function generatePDF(txt) {
-    recognized_Text = txt.message;
-    setText(recognized_Text);
-    const pdf_text = textRef.current;
-    console.log('pdf_text', pdf_text);
+  async function generatePDF(text) {
+    recognized_Text = text.message;
 
     const doc = new jsPDF();
     doc.text(recognized_Text, 10, 10);
+
     doc.save('a4.pdf');
+    setUploadReady(true);
   }
 
-  function handleCloudinary() {
-    console.log(pdf);
-    // try {
-    //     fetch("/api/upload", {
-    //         method: "POST",
-    //         body: JSON.stringify({ data: img }),
-    //         headers: { "Content-Type": "application/json" },
-    //     })
-    //         // .then((response) => {
-    //         //     console.log("response", response.status)
-    //         //     response.json().then((data) => {
-    //         //         urls.push(data.data);
-    //         //         toStringUrl(urls)
-    //         //     });
-    //         // });
-    // } catch (error) {
-    //     console.error(error);
-    // }
+  const fileToBase64 = (file, cb) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      cb(null, reader.result);
+    };
+    reader.onerror = function (error) {
+      cb(error, null);
+    };
+  };
+
+  const onUploadFileChange = ({ target }) => {
+    console.log(`target.file`, target.files[0]);
+    fileToBase64(target.files[0], (err, result) => {
+      if (result) {
+        handleCloudinary(result);
+      }
+    });
+  };
+
+  async function handleCloudinary(pdf) {
+    try {
+      fetch('/api/cloudinary', {
+        method: 'POST',
+        body: JSON.stringify({ data: pdf }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setLink(data.data);
+        });
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
     <>
@@ -118,7 +135,22 @@ function OCR() {
       <Container>
         <VideoContainer>
           <Title> Video snapshot 🎥</Title>
-          <Button onClick={videoHandler}>Select Video</Button>
+          {link ? (
+            <Status>
+              <Link href={link} passHref>
+                <a>
+                  <Text>{link}</Text>
+                </a>
+              </Link>
+            </Status>
+          ) : (
+            ''
+          )}
+          <Button 
+            title="click to select video"
+            onClick={videoHandler}
+          >Select Video
+          </Button>
           <input ref={inputRef} type="file" hidden onChange={handleChange} />
           {video ? (
             <Video
@@ -128,9 +160,33 @@ function OCR() {
               src={URL.createObjectURL(video)}
             ></Video>
           ) : (
-            <Video controls></Video>
+            <Video
+            title="video shows here"
+            controls></Video>
           )}
-          <Button>Recognize Text</Button>
+          <Flex>
+            <Button
+              title="click to begin text recognition"
+             onClick={handleSnapshot}
+             >Recognize Text 📝
+            </Button>
+            <UploadButton
+              title="upload generated PDFs"
+              onClick={() => {
+                pdfRef.current.click();
+              }}
+            >
+              Upload
+            </UploadButton>
+          </Flex>
+          <input
+            ref={pdfRef}
+            type="file"
+            name="filetobase64"
+            onChange={onUploadFileChange}
+            accept="application/pdf"
+            hidden
+          />
         </VideoContainer>
       </Container>
     </>

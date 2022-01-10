@@ -1,4 +1,3 @@
-var cloudinary = require("cloudinary").v2;
 import Tesseract from 'tesseract.js';
 import { createWorker } from 'tesseract.js';
 
@@ -18,7 +17,7 @@ export const config = {
 
 
 export default async function handler(req, res) {
-  let uploaded_url = ""
+  let recognizedText = ""
   const fileStr = req.body.data
 
   if (req.method === "POST") {
@@ -28,12 +27,12 @@ export default async function handler(req, res) {
       await worker.loadLanguage('eng');
       await worker.initialize('eng');
       const { data: { text } } = await worker.recognize(fileStr);
-      uploaded_url = text
+      recognizedText = text
       await worker.terminate();
     } catch (error) {
       console.log('error', error);
     }
-    res.status(200).json({ message: uploaded_url });
-    console.log('backend complete')
+    res.status(200).json({ message: recognizedText });
+    // console.log('backend complete', recognizedText)
   }
 }
