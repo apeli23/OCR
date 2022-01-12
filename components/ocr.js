@@ -60,7 +60,8 @@ function OCR() {
         method: 'POST',
         body: JSON.stringify({ data: preview }),
         headers: { 'Content-Type': 'application/json' },
-      }).then((response) => {
+      })
+      .then((response) => {
         console.log(response.status);
         response.json().then((data) => {
           url.push(data);
@@ -74,7 +75,7 @@ function OCR() {
 
   async function generatePDF(text) {
     recognized_Text = text.message;
-
+    cleaned_Text = recognized_Text.replace(/[^a-zA-Z ]/g, "")
     const doc = new jsPDF();
     doc.text(recognized_Text, 10, 10);
 
@@ -121,11 +122,20 @@ function OCR() {
     <>
       <Top>
         <TopLeft>
-          <TopImg src="https://www.creative-tim.com/assets/frameworks/icon-nextjs-552cecd0240ba0ae7b5fbf899c1ee10cd66f8c38ea6fe77233fd37ad1cff0dca.png" />
+          <Link href="https://nextjs.org/docs" passHref>
+            <a>
+              {' '}
+              <TopImg src="https://www.creative-tim.com/assets/frameworks/icon-nextjs-552cecd0240ba0ae7b5fbf899c1ee10cd66f8c38ea6fe77233fd37ad1cff0dca.png" />
+            </a>
+          </Link>
           <TopText>Next js</TopText>
-          <TopImg src="https://cdn-images-1.medium.com/max/1200/1*gGzRmUKNOC_X7klFjTk8EA.png" />{' '}
+          <Link href="https://emotion.sh/docs/introduction" passHref>
+            <TopImg src="https://cdn-images-1.medium.com/max/1200/1*gGzRmUKNOC_X7klFjTk8EA.png" />
+          </Link>
           <TopText>Emotion css</TopText>
-          <Cloudinary src="https://res.cloudinary.com/cloudinary-marketing/images/dpr_2.0/c_scale,w_300,dpr_3.0/f_auto,q_auto/v1638460217/website_2021/cloudinary_logo_blue_0720/cloudinary_logo_blue_0720.png?_i=AA" />
+          <Link href="https://cloudinary.com/" passHref>
+            <Cloudinary src="https://res.cloudinary.com/cloudinary-marketing/images/dpr_2.0/c_scale,w_300,dpr_3.0/f_auto,q_auto/v1638460217/website_2021/cloudinary_logo_blue_0720/cloudinary_logo_blue_0720.png?_i=AA" />
+          </Link>
         </TopLeft>
         <TopCenter>
           <TopTitle>VIDEO CHARACTER RECOGNITION</TopTitle>
@@ -146,10 +156,8 @@ function OCR() {
           ) : (
             ''
           )}
-          <Button 
-            title="click to select video"
-            onClick={videoHandler}
-          >Select Video
+          <Button title="click to select video" onClick={videoHandler}>
+            Select Video
           </Button>
           <input ref={inputRef} type="file" hidden onChange={handleChange} />
           {video ? (
@@ -160,15 +168,14 @@ function OCR() {
               src={URL.createObjectURL(video)}
             ></Video>
           ) : (
-            <Video
-            title="video shows here"
-            controls></Video>
+            <Video title="video shows here" controls></Video>
           )}
           <Flex>
             <Button
               title="click to begin text recognition"
-             onClick={handleSnapshot}
-             >Recognize Text 📝
+              onClick={handleSnapshot}
+            >
+              Recognize Text 📝
             </Button>
             <UploadButton
               title="upload generated PDFs"

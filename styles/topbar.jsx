@@ -57,10 +57,10 @@ export const TopImg = styled.img`
 `;
 
 export const Cloudinary = styled.img`
-  width: 120px;
-  height: 29px;
+  width: 118px;
+  height: 17px;
   margin-right: 10px;
-  margin-left: 15px;
+  margin-left: 5px;
 `;
 
 export const TopIcon = styled.i`

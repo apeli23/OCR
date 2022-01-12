@@ -8,7 +8,7 @@ cloudinary.config({
 
 export default async function handler(req,res) {
     let uploaded_url = ""
-    const fileStr = req.body.data;
+    const fileStr = "https://res.cloudinary.com/demo/image/upload/c_crop,g_west,h_1440,w_1520,x_50/c_scale,h_283/black_car.jpg";
     
     if (req.method === "POST") {
       console.log(fileStr)
@@ -18,6 +18,7 @@ export default async function handler(req,res) {
               fileStr,
               {
                 chunk_size: 6000000,
+                
               }
             );
            uploaded_url = uploadedResponse.secure_url

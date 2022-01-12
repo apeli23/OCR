@@ -28,11 +28,12 @@ export default async function handler(req, res) {
       await worker.initialize('eng');
       const { data: { text } } = await worker.recognize(fileStr);
       recognizedText = text
+      // recognizedText.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/gi, '');
       await worker.terminate();
     } catch (error) {
       console.log('error', error);
     }
     res.status(200).json({ message: recognizedText });
-    // console.log('backend complete', recognizedText)
+    console.log('backend complete')
   }
 }
