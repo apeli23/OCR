@@ -14,7 +14,7 @@ export const Top = styled.div`
 `;
 
 export const TopLeft = styled.div`
-  flex: 2;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,11 +25,11 @@ export const TopRight = styled.div`
   flex: 3;
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-right: 50%;
 `;
 
 export const TopCenter = styled.div`
-  flex: 5;
+  flex: 9 ;  
 `;
 export const TopText = styled.p`
   font-size: 10px;
@@ -40,7 +40,7 @@ export const TopTitle = styled.li`
   margin: 0;
   padding: 0;
   list-style: none;
-  margin-right: 20px;
+  margin-right: 70px;
   font-size: 21px;
   font-weight: 300;
   cursor: pointer;

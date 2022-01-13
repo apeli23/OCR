@@ -1,19 +1,9 @@
-import Tesseract from 'tesseract.js';
 import { createWorker } from 'tesseract.js';
 
 
 const worker = createWorker({
   logger: m => console.log(m)
 });
-
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "20mb",
-    },
-  },
-};
 
 
 export default async function handler(req, res) {
@@ -28,7 +18,6 @@ export default async function handler(req, res) {
       await worker.initialize('eng');
       const { data: { text } } = await worker.recognize(fileStr);
       recognizedText = text
-      // recognizedText.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/gi, '');
       await worker.terminate();
     } catch (error) {
       console.log('error', error);

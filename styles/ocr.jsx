@@ -24,7 +24,7 @@ export const Title = styled.li`
 
 export const VideoContainer = styled.div`
   text-align:center;
-  margin-left:25%;
+  margin:auto;
 `
 
 export const Button = styled.div`
@@ -74,9 +74,11 @@ export const Video = styled.video`
 
 export const TextContainer = styled.div`
   text-align: center;
-  border: 5px solid red;
-  margin: 1% 2% 2%;
+  margin-left: 5%;
   padding 10 10 10;
+  width: 35vw;
+  margin-top: 15%;
+  margin-right: 15%;
 `
 export const UploadButton = styled.button`
   padding: 10px;
@@ -85,7 +87,7 @@ export const UploadButton = styled.button`
   color: white;
   border:0px;
   font-weight: bold;
-  margin: 20px;
+  margin-top: 30px;
   padding: 1em 3em;
   background-size: 300% 300%;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -97,15 +99,19 @@ export const UploadButton = styled.button`
 
 export const Text = styled.p`
   font-size: 15px;
-  margi-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 200px;
+  height : 50px
 `
 
 export const Status = styled.div`
-background-color: #d4d4d4;
-border-radius: 0.5rem;
-margin-right: 0.5rem;
-font-weight: 10;
-margin-top: 5px;
+  background-color: #d4d4d4;
+  border-radius: 0.5rem;
+  margin-right: 0.5rem;
+  font-weight: 10;
+  margin-top: 5px;
+  margin-bottom: 5px;
 `;
 
 export const Flex = styled.div`

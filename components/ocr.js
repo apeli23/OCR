@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import VideoSnapshot from 'video-snapshot';
 import {
   Cloudinary,
   Top,
@@ -8,8 +7,9 @@ import {
   TopLeft,
   TopTitle,
   TopText,
-  TopRight,
 } from '../styles/topbar';
+import VideoSnapshot from 'video-snapshot';
+
 import {
   Flex,
   Button,
@@ -20,23 +20,26 @@ import {
   UploadButton,
   Status,
   Text,
+  TextContainer,
 } from '../styles/ocr';
 import Link from 'next/link';
+import { useScreenshot } from 'use-react-screenshot';
+
 
 function OCR() {
   const videoRef = useRef(null);
   const inputRef = useRef(null);
-  const pdfRef = useRef(null);
+  const resultRef = useRef(null);
 
   const [video, setVideo] = useState();
-  const [uploadready, setUploadReady] = useState(false);
   const [link, setLink] = useState('');
+  const [result, setResult] = useState('');
+  const [textpreview, setTextPreview ] = useState(false)
 
-  const { jsPDF } = require('jspdf');
+  const [image, takeScreenshot] = useScreenshot();
 
   var snapshoter;
   let url = [];
-  let recognized_Text = '';
 
   const videoHandler = async (e) => {
     inputRef.current.click();
@@ -47,7 +50,8 @@ function OCR() {
     setVideo(file);
   };
 
-  const handleSnapshot = async () => {
+  const handleRecognition = async () => {
+    setTextPreview(true)
     snapshoter = new VideoSnapshot(video);
     const currentTime = videoRef.current.currentTime;
     const videoPreview = await snapshoter.takeSnapshot(currentTime);
@@ -60,12 +64,11 @@ function OCR() {
         method: 'POST',
         body: JSON.stringify({ data: preview }),
         headers: { 'Content-Type': 'application/json' },
-      })
-      .then((response) => {
+      }).then((response) => {
         console.log(response.status);
         response.json().then((data) => {
           url.push(data);
-          generatePDF(url[0]);
+          textHandler(url[0]);
         });
       });
     } catch (error) {
@@ -73,41 +76,18 @@ function OCR() {
     }
   };
 
-  async function generatePDF(text) {
-    recognized_Text = text.message;
-    cleaned_Text = recognized_Text.replace(/[^a-zA-Z ]/g, "")
-    const doc = new jsPDF();
-    doc.text(recognized_Text, 10, 10);
-
-    doc.save('a4.pdf');
-    setUploadReady(true);
-  }
-
-  const fileToBase64 = (file, cb) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-      cb(null, reader.result);
-    };
-    reader.onerror = function (error) {
-      cb(error, null);
-    };
+  const textHandler = (txt) => {
+    const text = txt?.message;
+    const cleaned_Text = text.replace(/[^a-zA-Z ]/g, '');
+    setResult(cleaned_Text);
+    takeScreenshot(resultRef.current);
   };
 
-  const onUploadFileChange = ({ target }) => {
-    console.log(`target.file`, target.files[0]);
-    fileToBase64(target.files[0], (err, result) => {
-      if (result) {
-        handleCloudinary(result);
-      }
-    });
-  };
-
-  async function handleCloudinary(pdf) {
+  async function handleCloudinary() {
     try {
       fetch('/api/cloudinary', {
         method: 'POST',
-        body: JSON.stringify({ data: pdf }),
+        body: JSON.stringify({ data: image }),
         headers: { 'Content-Type': 'application/json' },
       })
         .then((response) => response.json())
@@ -128,11 +108,7 @@ function OCR() {
               <TopImg src="https://www.creative-tim.com/assets/frameworks/icon-nextjs-552cecd0240ba0ae7b5fbf899c1ee10cd66f8c38ea6fe77233fd37ad1cff0dca.png" />
             </a>
           </Link>
-          <TopText>Next js</TopText>
-          <Link href="https://emotion.sh/docs/introduction" passHref>
-            <TopImg src="https://cdn-images-1.medium.com/max/1200/1*gGzRmUKNOC_X7klFjTk8EA.png" />
-          </Link>
-          <TopText>Emotion css</TopText>
+          <TopText>Next js</TopText>{' '}
           <Link href="https://cloudinary.com/" passHref>
             <Cloudinary src="https://res.cloudinary.com/cloudinary-marketing/images/dpr_2.0/c_scale,w_300,dpr_3.0/f_auto,q_auto/v1638460217/website_2021/cloudinary_logo_blue_0720/cloudinary_logo_blue_0720.png?_i=AA" />
           </Link>
@@ -140,22 +116,11 @@ function OCR() {
         <TopCenter>
           <TopTitle>VIDEO CHARACTER RECOGNITION</TopTitle>
         </TopCenter>
-        <TopRight></TopRight>
       </Top>
       <Container>
         <VideoContainer>
           <Title> Video snapshot 🎥</Title>
-          {link ? (
-            <Status>
-              <Link href={link} passHref>
-                <a>
-                  <Text>{link}</Text>
-                </a>
-              </Link>
-            </Status>
-          ) : (
-            ''
-          )}
+
           <Button title="click to select video" onClick={videoHandler}>
             Select Video
           </Button>
@@ -173,28 +138,37 @@ function OCR() {
           <Flex>
             <Button
               title="click to begin text recognition"
-              onClick={handleSnapshot}
+              onClick={handleRecognition}
             >
               Recognize Text 📝
             </Button>
+          </Flex>
+        </VideoContainer>
+        {result ? (
+          <TextContainer>
+            <Status>
+              {link ? (
+                  <a href={link}>
+                    <Text>{link}</Text>
+                  </a>
+              ) : (
+                'text link shows here'
+              )}
+            </Status>
+            
+            <Text ref={resultRef}>{result}</Text>
             <UploadButton
               title="upload generated PDFs"
-              onClick={() => {
-                pdfRef.current.click();
-              }}
+              onClick={handleCloudinary}
             >
-              Upload
+              Get text link
             </UploadButton>
-          </Flex>
-          <input
-            ref={pdfRef}
-            type="file"
-            name="filetobase64"
-            onChange={onUploadFileChange}
-            accept="application/pdf"
-            hidden
-          />
-        </VideoContainer>
+          </TextContainer>
+        ) : (
+          <TextContainer>
+            {textpreview? "please wait..." : "texts show here"}
+          </TextContainer>
+        )}
       </Container>
     </>
   );
